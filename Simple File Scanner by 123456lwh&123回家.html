@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simple File Scanner by 123456lwh&123回家</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f9;
+            margin: 0;
+            padding: 20px;
+        }
+        .container {
+            max-width: 600px;
+            margin: auto;
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        h1 {
+            text-align: center;
+            color: #333;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            color: #555;
+        }
+        input[type="file"],
+        input[type="text"] {
+            width: calc(100% - 22px);
+            padding: 10px;
+            margin-bottom: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+        button {
+            width: 100%;
+            padding: 10px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        .results {
+            margin-top: 20px;
+            padding: 10px;
+            background-color: #f9f9f9;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+        .results p {
+            margin: 5px 0;
+        }
+        .results strong {
+            color: #333;
+        }
+        .results .threat-detected {
+            color: red;
+        }
+        .results .no-threat-detected {
+            color: green;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <h1>Simple File Scanner by 123456lwh&123回家</h1>
+
+    <!-- File Input -->
+    <label for="file">Select file to scan:</label>
+    <input type="file" id="file" accept=".exe,.dll,.bat">
+
+    <button onclick="scanFile()">Start File Scan</button>
+
+    <!-- URL Input -->
+    <label for="url">Enter URL to scan:</label>
+    <input type="text" id="url" placeholder="https://example.com">
+
+    <button onclick="scanUrl()">Start URL Scan</button>
+
+    <div class="results" id="results"></div>
+</div>
+
+<script>
+    class ScanResult {
+        constructor(engine, fileName, url, threatDetected, details) {
+            this.engine = engine;
+            this.fileName = fileName;
+            this.url = url;
+            this.threatDetected = threatDetected;
+            this.details = details;
+        }
+    }
+
+    function simulateScan(data, engine) {
+        // Simulate sending file data to different antivirus engines and return result
+        return Math.random() > 0.5; // Random number simulating presence of threat
+    }
+
+    function simulateUrlScan(url, engine) {
+        // Simulate sending URL to different antivirus engines and return result
+        return Math.random() > 0.5; // Random number simulating presence of threat
+    }
+
+    async function scanFile() {
+        const fileInput = document.getElementById('file');
+        const resultsDiv = document.getElementById('results');
+
+        if (!fileInput.files.length) {
+            resultsDiv.innerHTML = '<p>Please select a file.</p>';
+            return;
+        }
+
+        const file = fileInput.files[0];
+        const reader = new FileReader();
+
+        reader.onload = () => {
+            const arrayBuffer = reader.result;
+            try {
+                const results = [];
+                const engines = ["360", "Tencent", "ESET", "Bitdefender", "Kaspersky", "Avast", "Avira"];
+                for (const engine of engines) {
+                    const threatDetected = simulateScan(arrayBuffer, engine);
+                    results.push(new ScanResult(
+                        engine,
+                        file.name,
+                        "",
+                        threatDetected,
+                        threatDetected ? "Threat detected" : "No threat detected"
+                    ));
+                }
+                displayResults(results);
+            } catch (error) {
+                resultsDiv.innerHTML = `<p>Scan failed: ${error.message}</p>`;
+            }
+        };
+
+        reader.readAsArrayBuffer(file);
+    }
+
+    async function scanUrl() {
+        const urlInput = document.getElementById('url');
+        const resultsDiv = document.getElementById('results');
+        const url = urlInput.value.trim();
+
+        if (!url) {
+            resultsDiv.innerHTML = '<p>Please enter a valid URL.</p>';
+            return;
+        }
+
+        try {
+            const results = [];
+            const engines = ["360", "Tencent", "ESET", "Bitdefender", "Kaspersky", "Avast", "Avira"];
+            for (const engine of engines) {
+                const threatDetected = simulateUrlScan(url, engine);
+                results.push(new ScanResult(
+                    engine,
+                    "",
+                    url,
+                    threatDetected,
+                    threatDetected ? "Threat detected" : "No threat detected"
+                ));
+            }
+            displayResults(results);
+        } catch (error) {
+            resultsDiv.innerHTML = `<p>Scan failed: ${error.message}</p>`;
+        }
+    }
+
+    function displayResults(results) {
+        const resultsDiv = document.getElementById('results');
+        let html = '<h2>Scan Results</h2>';
+        for (const result of results) {
+            html += `<p><strong>${result.engine} Engine:</strong> `;
+            html += `<span class="${result.threatDetected ? 'threat-detected' : 'no-threat-detected'}">${result.details}</span>`;
+            if (result.fileName) {
+                html += ` (${result.fileName})`;
+            } else if (result.url) {
+                html += ` (${result.url})`;
+            }
+            html += '</p>';
+        }
+        resultsDiv.innerHTML = html;
+    }
+</script>
+</body>
+</html>
+
+
+
