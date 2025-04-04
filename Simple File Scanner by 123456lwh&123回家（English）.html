@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simple File Scanner by 123456lwh&123回家</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+        .container {
+            max-width: 600px;
+            margin: auto;
+        }
+        .file-input, .url-input {
+            margin-bottom: 20px;
+        }
+        .results {
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <h1>Simple File Scanner by 123456lwh&123回家</h1>
+
+    <!-- File Input -->
+    <div class="file-input">
+        <label for="file">Select file to scan:</label>
+        <input type="file" id="file" accept=".exe,.dll,.bat">
+    </div>
+    <button onclick="scanFile()">Start File Scan</button>
+
+    <!-- URL Input -->
+    <div class="url-input">
+        <label for="url">Enter URL to scan:</label>
+        <input type="text" id="url" placeholder="https://example.com">
+    </div>
+    <button onclick="scanUrl()">Start URL Scan</button>
+
+    <div class="results" id="results"></div>
+</div>
+
+<script>
+    class ScanResult {
+        constructor(engine, fileName, url, threatDetected, details) {
+            this.engine = engine;
+            this.fileName = fileName;
+            this.url = url;
+            this.threatDetected = threatDetected;
+            this.details = details;
+        }
+    }
+
+    function simulateScan(data, engine) {
+        // Simulate sending file data to different antivirus engines and return result
+        return Math.random() > 0.5; // Random number simulating presence of threat
+    }
+
+    function simulateUrlScan(url, engine) {
+        // Simulate sending URL to different antivirus engines and return result
+        return Math.random() > 0.5; // Random number simulating presence of threat
+    }
+
+    async function scanFile() {
+        const fileInput = document.getElementById('file');
+        const resultsDiv = document.getElementById('results');
+
+        if (!fileInput.files.length) {
+            resultsDiv.innerHTML = '<p>Please select a file.</p>';
+            return;
+        }
+
+        const file = fileInput.files[0];
+        const reader = new FileReader();
+
+        reader.onload = () => {
+            const arrayBuffer = reader.result;
+            try {
+                const results = [];
+                const engines = ["360", "Tencent", "ESET", "Bitdefender", "Kaspersky", "Avast", "Avira"];
+                for (const engine of engines) {
+                    const threatDetected = simulateScan(arrayBuffer, engine);
+                    results.push(new ScanResult(
+                        engine,
+                        file.name,
+                        "",
+                        threatDetected,
+                        threatDetected ? "Threat detected" : "No threat detected"
+                    ));
+                }
+                displayResults(results);
+            } catch (error) {
+                resultsDiv.innerHTML = `<p>Scan failed: ${error.message}</p>`;
+            }
+        };
+
+        reader.readAsArrayBuffer(file);
+    }
+
+    async function scanUrl() {
+        const urlInput = document.getElementById('url');
+        const resultsDiv = document.getElementById('results');
+        const url = urlInput.value.trim();
+
+        if (!url) {
+            resultsDiv.innerHTML = '<p>Please enter a valid URL.</p>';
+            return;
+        }
+
+        try {
+            const results = [];
+            const engines = ["360", "Tencent", "ESET", "Bitdefender", "Kaspersky", "Avast", "Avira"];
+            for (const engine of engines) {
+                const threatDetected = simulateUrlScan(url, engine);
+                results.push(new ScanResult(
+                    engine,
+                    "",
+                    url,
+                    threatDetected,
+                    threatDetected ? "Threat detected" : "No threat detected"
+                ));
+            }
+            displayResults(results);
+        } catch (error) {
+            resultsDiv.innerHTML = `<p>Scan failed: ${error.message}</p>`;
+        }
+    }
+
+    function displayResults(results) {
+        const resultsDiv = document.getElementById('results');
+        let html = '<h2>Scan Results</h2>';
+        for (const result of results) {
+            html += `<p><strong>${result.engine} Engine:</strong> ${result.details}`;
+            if (result.fileName) {
+                html += ` (${result.fileName})`;
+            } else if (result.url) {
+                html += ` (${result.url})`;
+            }
+            html += '</p>';
+        }
+        resultsDiv.innerHTML = html;
+    }
+</script>
+</body>
+</html>
+
+
